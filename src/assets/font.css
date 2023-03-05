@@ -1,0 +1,52 @@
+@font-face {
+    font-family: 'Averta';
+    src: url('./font/Averta/Averta-Thin.otf');
+    font-weight: 100;
+}
+@font-face {
+    font-family: 'Averta';
+    src: url('./font/Averta/Averta-Regular.otf');
+    font-weight: 400;
+}
+@font-face {
+    font-family: 'Averta';
+    src: url('./font/Averta/Averta-Bold.otf');
+    font-weight: 700;
+}
+@font-face {
+    font-family: 'Averta';
+    src: url('./font/Averta/Averta-Black.otf');
+    font-weight: 900;
+}
+
+/*italic*/
+@font-face {
+    font-family: 'Averta';
+    src: url('./font/Averta/Averta-ThinItalic.otf');
+    font-weight: 100;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'Averta';
+    src: url('./font/Averta/Averta-RegularItalic.otf');
+    font-weight: 400;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'Averta';
+    src: url('./font/Averta/Averta-BoldItalic.otf');
+    font-weight: 700;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'Averta';
+    src: url('./font/Averta/Averta-BlackItalic.otf');
+    font-weight: 900;
+    font-style: italic;
+}
+/*italic*/
+
+body * {
+    font-family: Averta, serif;
+    font-weight: normal;
+}
