@@ -2,6 +2,13 @@
   <div>
     <div style="text-align: right">
       <el-button
+          type="primary"
+          :icon="Star"
+          @click="onStudy"
+      >
+        Học bài
+      </el-button>
+      <el-button
         type="success"
         :icon="Plus"
         @click="onCreate"
@@ -27,6 +34,23 @@
         label="Loại"
         minWidth="160"
       />
+      <el-table-column
+          prop="linkMp3"
+          label="Phát âm"
+          minWidth="160"
+          align="center"
+      >
+        <template #default="scope">
+          <el-button
+              v-if="scope.row.linkMp3"
+              :loading="loadingBtnMp3[scope.$index]"
+              plain
+              type="primary"
+              :icon="Headset"
+              @click="playMp3(scope.row.linkMp3, scope.$index)"
+          />
+        </template>
+      </el-table-column>
       <el-table-column
         prop="pronunciation"
         label="Pronunciation"
@@ -70,12 +94,12 @@
 <script setup>
 import { inject, ref, unref } from 'vue'
 import Dropdown from '@/components/common/Dropdown.vue'
-import { Plus } from '@element-plus/icons-vue'
-import { API } from '@/js/ConstantApi'
-import { callApi } from '@/js/ApiFactory'
-import { COMMAND, FORM_MODE } from '@/const/const'
-import { showAlert, showConfirm, showError } from '@/js/Alert'
-import { screenLoading } from '@/js/Loading'
+import {Plus, Headset, Star} from '@element-plus/icons-vue'
+import {API} from '@/js/ConstantApi'
+import {callApi} from '@/js/ApiFactory'
+import {COMMAND, FORM_MODE} from '@/const/const'
+import {ALERT_TYPE, showAlert, showConfirm, showError} from '@/js/Alert'
+import {screenLoading} from '@/js/Loading'
 
 const props = defineProps({
   formSearch: {
@@ -83,7 +107,7 @@ const props = defineProps({
     default: () => {}
   }
 })
-const emits = defineEmits(['command'])
+const emits = defineEmits(['command', 'study'])
 
 const { loadingSearch, updateLoadingSearch } = inject('loadingSearch');
 const tableData = ref([])
@@ -91,6 +115,7 @@ const isShowMeaning = ref(false)
 const currentPage = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
+const loadingBtnMp3 = ref(Array.from({length: 100}).fill(false))
 const items = [
   { command: COMMAND.EDIT, label: 'Sửa' },
   { command: COMMAND.VIEW, label: 'Xem chi tiết' },
@@ -112,6 +137,9 @@ function handleCommand({ row, command }) {
 }
 function onCreate() {
   emits('command', null, FORM_MODE.CREATE)
+}
+function onStudy() {
+  emits('study')
 }
 const handleSizeChange = (val) => {
   pageSize.value = val
@@ -146,6 +174,17 @@ function onDelete(row) {
     }).finally(() => {
       loading.close()
     })
+  })
+}
+function playMp3(linkMp3, index) {
+  loadingBtnMp3.value[index] = true
+  const audio = new Audio(linkMp3)
+  audio.addEventListener('ended', () => {
+    loadingBtnMp3.value[index] = false
+  })
+  audio.play().catch(() => {
+    showAlert('Đã có lỗi không thể phát MP3', ALERT_TYPE.ERROR)
+    loadingBtnMp3.value[index] = false
   })
 }
 

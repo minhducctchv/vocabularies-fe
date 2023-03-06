@@ -89,7 +89,7 @@
           </el-col>
           <el-col v-bind="fnResponsive(12)">
             <el-form-item
-              label="Gợi ý"
+              label="Gợi ý 1"
               prop="suggestion1"
             >
               <el-input
@@ -98,7 +98,7 @@
                 maxlength="200"
                 show-word-limit
                 clearable
-                placeholder="Gợi ý"
+                placeholder="Gợi ý 1"
               />
             </el-form-item>
           </el-col>
@@ -125,7 +125,7 @@
 </template>
 
 <script setup>
-import { inject, ref, watch } from 'vue'
+import {inject, onMounted, ref, watch} from 'vue'
 import { useResponsive } from '@/hook/Responsive'
 import { WORD_TYPE } from '@/const/const'
 import { RefreshLeft, Search } from '@element-plus/icons-vue'
@@ -160,6 +160,10 @@ watch(
   }, 500)
 )
 
+onMounted(() => {
+  onSearch()
+})
+
 async function onSearch() {
   try {
     await refFormSearch.value.validate()
@@ -168,10 +172,13 @@ async function onSearch() {
     // do nothing
   }
 }
-
 function onReset() {
   refFormSearch.value.resetFields()
 }
+
+defineExpose({
+  onSearch
+})
 </script>
 
 <style scoped>

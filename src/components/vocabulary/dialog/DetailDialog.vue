@@ -58,6 +58,8 @@
               placeholder="Loại từ"
               style="width: 100%"
               clearable
+              @change="validateField('type')"
+              @blur="validateField('type')"
             >
               <el-option
                 v-for="item in WORD_TYPE"
@@ -240,6 +242,8 @@ import { callApi } from '@/js/ApiFactory'
 
 const { fnResponsive } = useResponsive()
 
+const emits = defineEmits(['search'])
+
 const INIT_FORM = {
   'level': 0,
   'linkImage': '',
@@ -280,11 +284,9 @@ function openDialog(row, formMode) {
   title.value = `${unref(mode) === FORM_MODE.CREATE ? 'Thêm mới' : (unref(mode) === FORM_MODE.EDIT ? 'Cập nhật' : 'Xem')} từ vựng`
   showDialog.value = true
 }
-
 function closeDialog() {
   showDialog.value = false
 }
-
 async function onSave() {
   try {
     await refForm.value.validate()
@@ -292,6 +294,8 @@ async function onSave() {
     const loading = screenLoading()
     callApi( payload.id? API.VOCA_UPDATE : API.VOCA_CREATE, {}, payload).then(() => {
       showAlert(`${payload.id ? 'Cập nhật' : 'Thêm mới'} thành công`)
+      closeDialog()
+      emits('search', true)
     }).catch(err => {
       showError(err)
     }).finally(() => {
@@ -301,7 +305,6 @@ async function onSave() {
     // do nothing
   }
 }
-
 function playMp3(linkMp3) {
   loadingBtnPlay.value = true
   const audio = new Audio(linkMp3)
@@ -313,10 +316,14 @@ function playMp3(linkMp3) {
     loadingBtnPlay.value = false
   })
 }
+function validateField(field) {
+  refForm.value.validateField(field)
+}
 
 defineExpose({
   openDialog,
-  closeDialog
+  closeDialog,
+  playMp3
 })
 </script>
 
