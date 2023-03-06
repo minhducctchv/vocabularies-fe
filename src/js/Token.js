@@ -1,7 +1,7 @@
 const TOKEN_LOCAL = 'TOKEN_LOCAL'
 
 export function getToken() {
-    return JSON.parse(localStorage.getItem(TOKEN_LOCAL))
+    return JSON.parse(localStorage.getItem(TOKEN_LOCAL))?.id
 }
 
 export function saveToken(objToken) {

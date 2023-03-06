@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-import {computed, defineProps, defineEmits} from "vue";
+import {computed} from "vue";
 import {windowWidthHeight} from "@/js/WindowWidthHeight";
 
 const props = defineProps({

@@ -2,7 +2,7 @@
 @import "font.css";
 
 #app {
-  max-width: 1280px;
+  max-width: 1366px;
   margin: 0 auto;
   padding: 20px;
 
@@ -31,9 +31,5 @@ a,
   body {
     display: flex;
     place-items: center;
-  }
-
-  #app {
-    grid-template-columns: 1fr 1fr;
   }
 }

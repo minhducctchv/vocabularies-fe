@@ -5,6 +5,7 @@ import {getToken} from "@/js/Token";
 import {callApi} from "@/js/ApiFactory";
 import TokenHetHanDialog from "@/components/login/dialog/TokenHetHanDialog.vue";
 import {API} from "@/js/ConstantApi";
+import Table from '@/components/vocabulary/table/index.vue'
 
 const showLogin = ref(true)
 const tokenHetHanDialog = ref()
@@ -31,10 +32,12 @@ const handleHetHan = () => {
   tokenHetHanDialog.value.openDialog()
 }
 const checkToken = () => {
-  const token = getToken().token
+  const token = getToken()
   if (token) {
     callApi(API.CHECK_TOKEN, {
       token: token
+    }).then(() => {
+      showLogin.value = false
     }).catch(() => {
       handleHetHan()
     })
@@ -52,6 +55,7 @@ const checkToken = () => {
   />
   <div v-else>
 <!--    toàn bộ componet + dialog sau khi đăng nhập mới access được thì đặt trong này-->
+    <Table />
   </div>
 
   <TokenHetHanDialog ref="tokenHetHanDialog"/>

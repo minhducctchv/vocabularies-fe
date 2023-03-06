@@ -8,7 +8,7 @@
       <div style="text-align: center">
         <el-button
             type="primary"
-            @click="show = false">
+            @click="closeDialog">
           Đóng
         </el-button>
       </div>
@@ -18,12 +18,15 @@
 
 <script setup>
 import Dialog from "@/components/common/Dialog.vue";
-import {ref, defineExpose} from "vue";
+import {ref} from "vue";
 
 const show = ref(false)
 
 function openDialog() {
   show.value = true
+}
+function closeDialog() {
+  show.value = false
 }
 
 defineExpose({

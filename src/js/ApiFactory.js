@@ -18,7 +18,7 @@ export async function callApi(api, param, body) {
 async function callGet(url, param) {
     return axios.get(url, {
         headers: {
-            TOKEN_FIELD: getToken().token
+            TOKEN_FIELD: getToken()
         },
         params: param
     })
@@ -28,7 +28,7 @@ async function callPost(url, param, body, isPost = true) {
     return axios[isPost ? 'post' : 'put'](url, body,
         {
             headers: {
-                TOKEN_FIELD: getToken().token
+                TOKEN_FIELD: getToken()
             },
             params: param
         })
@@ -37,7 +37,7 @@ async function callPost(url, param, body, isPost = true) {
 async function callDelete(url, param) {
     return axios.delete(url, {
         headers: {
-            TOKEN_FIELD: getToken().token
+            TOKEN_FIELD: getToken()
         },
         params: param
     })

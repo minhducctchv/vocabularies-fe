@@ -5,3 +5,12 @@ export function requiredRule(label, trigger) {
         trigger: trigger || ['change', 'blur']
     }
 }
+
+const REGEX_NUMBER_ONLY = /^[0-9]*$/
+export function numberRule(label, trigger) {
+    return {
+        pattern: REGEX_NUMBER_ONLY,
+        message: `${label} là kiểu số`,
+        trigger: trigger || ['change', 'blur']
+    }
+}
