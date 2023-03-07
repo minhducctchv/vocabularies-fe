@@ -1,23 +1,30 @@
 <template>
   <Dialog
-      v-model="showDialog"
-      title="Học từ"
+    v-model="showDialog"
+    title="Học từ"
+    top="5vh"
   >
-    <el-carousel indicator-position="outside" :autoplay="false">
+    <el-carousel v-if="listWord.length > 0" indicator-position="outside" :autoplay="false" height="720px">
       <el-carousel-item v-for="item in listWord" :key="item.id">
-        <StudyWord :word="item" />
+        <StudyWord :word="item" @finish="handleFinish"/>
       </el-carousel-item>
     </el-carousel>
+    <div v-else>
+      <el-empty
+        image="https://thuviendohoa.vn/upload/images/items/chu-meo-may-doreamon-an-banh-ran-hinh-anh-png-627.jpg"
+        description="BẠN HỌC XONG HẾT RỒI ĐẤY"
+      />
+    </div>
   </Dialog>
 </template>
 
 <script setup>
-import Dialog from "@/components/common/Dialog.vue";
-import {onMounted, ref, watch} from "vue";
-import {callApi} from "@/js/ApiFactory";
-import {API} from "@/js/ConstantApi";
-import {screenLoading} from "@/js/Loading";
-import StudyWord from "@/components/vocabulary/dialog/StudyWord.vue";
+import Dialog from '@/components/common/Dialog.vue'
+import { ref, watch } from 'vue'
+import { callApi } from '@/js/ApiFactory'
+import { API } from '@/js/ConstantApi'
+import { screenLoading } from '@/js/Loading'
+import StudyWord from '@/components/vocabulary/dialog/StudyWord.vue'
 
 const showDialog = ref(false)
 const listWord = ref([])
@@ -29,6 +36,7 @@ watch(showDialog, (val) => {
     })
   }
 })
+
 async function findWord() {
   // tìm về 100 từ sort theo level thấp
   const loading = screenLoading()
@@ -49,11 +57,21 @@ async function findWord() {
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
+    [array[i], array[j]] = [array[j], array[i]]
   }
 }
 function openDialog() {
   showDialog.value = true
+}
+function handleFinish(isFinish, word) {
+  const index = listWord.value.findIndex(s => s.id === word.id)
+  listWord.value.splice(index, 1)
+  if (!isFinish) {
+    // chuyển xuống cuối mảng
+    setTimeout(() => {
+      listWord.value.push(word)
+    })
+  }
 }
 
 defineExpose({

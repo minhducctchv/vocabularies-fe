@@ -2,8 +2,6 @@ import axios from 'axios'
 import {getToken} from "@/js/Token";
 import {REQUEST_METHOD} from "@/js/ConstantApi";
 
-const TOKEN_FIELD = 'minhducctchv'
-
 axios.defaults.baseURL = 'http://localhost:8080';
 
 export async function callApi(api, param, body) {
@@ -18,7 +16,7 @@ export async function callApi(api, param, body) {
 async function callGet(url, param) {
     return axios.get(url, {
         headers: {
-            TOKEN_FIELD: getToken()
+            'minhducctchv': getToken()
         },
         params: param
     })
@@ -28,7 +26,7 @@ async function callPost(url, param, body, isPost = true) {
     return axios[isPost ? 'post' : 'put'](url, body,
         {
             headers: {
-                TOKEN_FIELD: getToken()
+                'minhducctchv': getToken()
             },
             params: param
         })
@@ -37,7 +35,7 @@ async function callPost(url, param, body, isPost = true) {
 async function callDelete(url, param) {
     return axios.delete(url, {
         headers: {
-            TOKEN_FIELD: getToken()
+            'minhducctchv': getToken()
         },
         params: param
     })
