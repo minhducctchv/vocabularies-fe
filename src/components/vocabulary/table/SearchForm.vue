@@ -147,7 +147,10 @@ const formSearch = ref({
   level: '',
   pronunciation: '',
   suggestion1: '',
-  type: ''
+  type: '',
+  // thêm sort theo createdDate DESC
+  direction: 'DESC',
+  properties: 'createdDate'
 })
 const rules = ref({
   level: [numberRule('Level')]

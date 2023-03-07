@@ -34,5 +34,9 @@ export const API = {
     VOCA_UPDATE: {
         url: 'vocabulary',
         method: REQUEST_METHOD.PUT
+    },
+    VOCA_GET_ONE: {
+        url: 'vocabulary/get-one',
+        method: REQUEST_METHOD.GET
     }
 }

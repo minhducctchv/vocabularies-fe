@@ -90,17 +90,14 @@
       >
         Xong
       </el-button>
+      <div style="margin-top: 10px; font-size: 16px">
+        Số lần đã học: <span style="font-size: 20px; font-weight: bold; color: darkslateblue">{{ props.word.level }}</span>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-// cho phép slide qua trái qua phải (UI)
-// tập hợp các chữ cái
-// các dấu nháy (hoặc ô)
-// khi gõ chữ nào chữ đó biến mất, nếu gõ ko có trong tập chữ => báo lỗi
-
-// phiên âm, phát âm, gợi ý... => đoán nghĩa
 import { computed, ref, unref, watch } from 'vue'
 import { ALERT_TYPE, showAlert, showConfirm, showError } from '@/js/Alert'
 import { StarFilled, VideoPlay, Select, Close } from '@element-plus/icons-vue'

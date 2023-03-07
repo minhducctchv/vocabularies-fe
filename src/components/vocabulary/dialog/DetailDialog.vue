@@ -68,7 +68,7 @@
                 :value="item.key"
               />
             </el-select>
-            <span v-else>{{ WORD_TYPE[formValues.type].value }}</span>
+            <span v-else>{{ WORD_TYPE[formValues.type]?.value }}</span>
           </el-form-item>
         </el-col>
         <el-col v-bind="fnResponsive(12)">
@@ -274,9 +274,16 @@ const isView = computed(() => {
   return unref(mode) === FORM_MODE.VIEW
 })
 
-function openDialog(row, formMode) {
+async function openDialog(row, formMode) {
   if (row) {
-    formValues.value = cloneDeep(row)
+    const loading = screenLoading()
+    try {
+      formValues.value = await callApi(API.VOCA_GET_ONE, { id: row.id})
+    } catch (err) {
+      showError(err)
+    } finally {
+      loading.close()
+    }
   } else {
     formValues.value = cloneDeep(INIT_FORM)
   }
