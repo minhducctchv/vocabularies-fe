@@ -91,7 +91,8 @@
         Xong
       </el-button>
       <div style="margin-top: 10px; font-size: 16px">
-        Số lần đã học: <span style="font-size: 20px; font-weight: bold; color: darkslateblue">{{ props.word.level }}</span>
+        Số lần đã học: <span style="font-size: 20px; font-weight: bold; color: darkslateblue">{{ props.word.level
+        }}</span>
       </div>
     </div>
   </div>
@@ -100,7 +101,7 @@
 <script setup>
 import { computed, ref, unref, watch } from 'vue'
 import { ALERT_TYPE, showAlert, showConfirm, showError } from '@/js/Alert'
-import { StarFilled, VideoPlay, Select, Close } from '@element-plus/icons-vue'
+import { Close, Select, StarFilled, VideoPlay } from '@element-plus/icons-vue'
 import { WORD_TYPE } from '@/const/const'
 import { callApi } from '@/js/ApiFactory'
 import { screenLoading } from '@/js/Loading'
@@ -127,10 +128,6 @@ const remainingLetter = computed(() => {
     wordArr.splice(index, 1)
   })
   return wordArr
-})
-const remainingLetterKeyCode = computed(() => {
-  const arr = unref(remainingLetter)
-  return arr.map(s => s.toUpperCase().charCodeAt(0))
 })
 const showWordInput = computed(() => {
   const wordArr = unref(props.word.word).split('')
@@ -162,17 +159,11 @@ watch(wordInput, (val) => {
 })
 
 function preventChar(e) {
-  console.log(11111, e.keyCode)
-  console.log(2222, e.which)
-  // if (!unref(remainingLetter).includes(e.key) && e.key !== 'Backspace') {
-  //   showAlert(`Không có chữ [${e.key}]`, ALERT_TYPE.ERROR)
-  //   e.preventDefault()
-  // }
-  // Lưu ý: e.keyCode luôn là chữ hoa, không phân biệt được hoa thường
-  const keyCode = e.keyCode || e.which
-  if (!unref(remainingLetterKeyCode).includes(keyCode) && keyCode !== 8) {
-    showAlert(`Không có chữ [${String.fromCharCode(keyCode)}]`, ALERT_TYPE.ERROR)
-    e.preventDefault()
+  if(e.key) { // th máy tính (ko phải mobile)
+    if (!unref(remainingLetter).includes(e.key) && e.key !== 'Backspace') {
+      showAlert(`Không có chữ [${e.key}]`, ALERT_TYPE.ERROR)
+      e.preventDefault()
+    }
   }
 }
 

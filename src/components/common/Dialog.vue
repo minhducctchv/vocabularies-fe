@@ -40,7 +40,7 @@ const dialogVisible = computed({
 const width = computed(() => {
   return windowWidthHeight.value.width > 1600 ? '30%' :
       (windowWidthHeight.value.width > 1280 ? '40%' :
-          (windowWidthHeight.value.width > 800 ? '60%' : '80%'))
+          (windowWidthHeight.value.width > 800 ? '60%' : (windowWidthHeight.value.width > 720 ? '80%' : '100%')))
 })
 
 function handleClose() {
