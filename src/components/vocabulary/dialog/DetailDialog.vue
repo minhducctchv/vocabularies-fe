@@ -223,6 +223,7 @@
           Lưu
         </el-button>
         <el-button
+          v-if="mode !== FORM_MODE.CREATE"
           type="danger"
           @click="onDelete"
         >
