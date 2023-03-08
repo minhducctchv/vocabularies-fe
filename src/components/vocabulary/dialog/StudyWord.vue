@@ -43,10 +43,10 @@
       <div style="height: 20px" />
       <el-card v-if="props.word.suggestion1 || props.word.suggestion2 || props.word.linkImage">
         <el-form-item v-if="props.word.suggestion1" label="Gợi ý 1:">
-          <div>{{ props.word.suggestion1 }}</div>
+          <div>{{ isShowAnswer ? props.word.suggestion1 : replaceKeyWord(props.word.suggestion1) }}</div>
         </el-form-item>
         <el-form-item v-if="props.word.suggestion2" label="Gợi ý 2:">
-          <div>{{ props.word.suggestion2 }}</div>
+          <div>{{ isShowAnswer ? props.word.suggestion1 : replaceKeyWord(props.word.suggestion2) }}</div>
         </el-form-item>
         <div v-if="props.word.linkImage" style="text-align: center">
           <el-image
@@ -203,6 +203,11 @@ function finish() {
       loading.close()
     })
   })
+}
+function replaceKeyWord(str) {
+  return str.replace(new RegExp(props.word.word, "gi"), "XXX");
+  // g để replace all (thay vì first)
+  // i để ko phân biệt hoa thường
 }
 
 function skip() {
