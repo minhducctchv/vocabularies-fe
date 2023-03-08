@@ -107,7 +107,7 @@ const props = defineProps({
     default: () => {}
   }
 })
-const emits = defineEmits(['command', 'study'])
+const emits = defineEmits(['command', 'study', 'studyCustom'])
 
 const { loadingSearch, updateLoadingSearch } = inject('loadingSearch');
 const tableData = ref([])
@@ -118,7 +118,8 @@ const total = ref(0)
 const loadingBtnMp3 = ref(Array.from({length: 100}).fill(false))
 const items = [
   { command: COMMAND.EDIT, label: 'Sửa' },
-  { command: COMMAND.VIEW, label: 'Xem chi tiết' },
+  // { command: COMMAND.VIEW, label: 'Xem chi tiết' },
+  { command: COMMAND.STUDY_CUSTOM, label: 'Học từ này' },
   { command: COMMAND.DELETE, label: 'Xóa' }
 ]
 
@@ -129,6 +130,9 @@ function handleCommand({ row, command }) {
       break
     case COMMAND.VIEW:
       emits('command', row, FORM_MODE.VIEW)
+      break
+    case COMMAND.STUDY_CUSTOM:
+      emits('studyCustom', row)
       break
     case COMMAND.DELETE:
       onDelete(row)

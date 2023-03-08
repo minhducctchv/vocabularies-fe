@@ -198,13 +198,14 @@
             <el-input
               v-if="!isView"
               v-model="formValues.meaning"
-              type="text"
-              maxlength="255"
+              type="textarea"
+              maxlength="500"
+              :autosize="{ minRows: 2, maxRows: 4 }"
               show-word-limit
               placeholder="Ý nghĩa"
               clearable
             />
-            <span v-else>{{ formValues.meaning }}</span>
+            <span v-else style="white-space: pre-line;">{{ formValues.meaning }}</span>
           </el-form-item>
         </el-col>
       </el-row>
@@ -221,8 +222,15 @@
         >
           Lưu
         </el-button>
+        <el-button
+          type="danger"
+          @click="onDelete"
+        >
+          Xóa
+        </el-button>
       </div>
     </template>
+    <DuplicateDialog ref="refDuplicateDialog" @save="onSave" @edit="handleEditOther"/>
   </Dialog>
 
 </template>
@@ -233,12 +241,13 @@ import { computed, ref, unref } from 'vue'
 import { cloneDeep } from 'lodash'
 import { FORM_MODE, WORD_TYPE } from '@/const/const'
 import { useResponsive } from '@/hook/Responsive'
-import { ALERT_TYPE, showAlert, showError } from '@/js/Alert'
+import { ALERT_TYPE, showAlert, showConfirm, showError } from '@/js/Alert'
 import { Headset } from '@element-plus/icons-vue'
 import { requiredRule } from '@/js/Validation'
 import { screenLoading } from '@/js/Loading'
 import { API } from '@/js/ConstantApi'
 import { callApi } from '@/js/ApiFactory'
+import DuplicateDialog from '@/components/vocabulary/dialog/DuplicateDialog.vue'
 
 const { fnResponsive } = useResponsive()
 
@@ -261,6 +270,7 @@ const showDialog = ref(false)
 const formValues = ref(INIT_FORM)
 const mode = ref('')
 const title = ref('')
+const refDuplicateDialog = ref()
 const rules = ref({
   word: [requiredRule('Từ')],
   pronunciation: [requiredRule('Pronunciation')],
@@ -294,10 +304,17 @@ async function openDialog(row, formMode) {
 function closeDialog() {
   showDialog.value = false
 }
-async function onSave() {
+async function onSave(isCheckDup = true) {
   try {
     await refForm.value.validate()
     const payload = unref(formValues)
+    if (isCheckDup) {
+      const duplicateItem = await getListDuplicateWord(payload.word, payload.id)
+      if (duplicateItem.length > 0) {
+        refDuplicateDialog.value.openDialog(duplicateItem)
+        return
+      }
+    }
     const loading = screenLoading()
     callApi( payload.id? API.VOCA_UPDATE : API.VOCA_CREATE, {}, payload).then(() => {
       showAlert(`${payload.id ? 'Cập nhật' : 'Thêm mới'} thành công`)
@@ -325,6 +342,42 @@ function playMp3(linkMp3) {
 }
 function validateField(field) {
   refForm.value.validateField(field)
+}
+async function getListDuplicateWord(word, id) {
+  const loading = screenLoading()
+  try {
+    const listDuplicateItem = await callApi(API.VOCA_FIND_BY_WORD, { word: word })
+    if (listDuplicateItem && listDuplicateItem.length > 0 && unref(mode) === FORM_MODE.CREATE) {
+      return listDuplicateItem
+    }
+    if (id && unref(mode) === FORM_MODE.EDIT && listDuplicateItem && listDuplicateItem.length > 0) {
+      const listDup = listDuplicateItem.filter(item => item.id !== id)
+      if (listDup.length > 0) return listDup
+    }
+  } catch (err) {
+    showError(err)
+  } finally {
+    loading.close()
+  }
+  return []
+}
+function handleEditOther(item) {
+  mode.value = FORM_MODE.EDIT
+  formValues.value = cloneDeep(item)
+}
+function onDelete() {
+  showConfirm('Bạn có chắc chắn muốn xóa?', () => {
+    const loading = screenLoading()
+    callApi(API.VOCA_DELETE, { id: unref(formValues).id }).then(() => {
+      showAlert('Xóa thành công')
+      closeDialog()
+      emits('search', true)
+    }).catch(err => {
+      showError(err)
+    }).finally(() => {
+      loading.close()
+    })
+  })
 }
 
 defineExpose({

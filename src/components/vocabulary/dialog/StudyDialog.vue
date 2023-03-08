@@ -20,13 +20,15 @@
 
 <script setup>
 import Dialog from '@/components/common/Dialog.vue'
-import { ref, watch } from 'vue'
+import { ref, unref, watch } from 'vue'
 import { callApi } from '@/js/ApiFactory'
 import { API } from '@/js/ConstantApi'
 import { screenLoading } from '@/js/Loading'
 import StudyWord from '@/components/vocabulary/dialog/StudyWord.vue'
+import { showError } from '@/js/Alert'
 
 const showDialog = ref(false)
+const studyCustom = ref(false)
 const listWord = ref([])
 
 watch(showDialog, (val) => {
@@ -38,21 +40,40 @@ watch(showDialog, (val) => {
 })
 
 async function findWord() {
-  // tìm về 100 từ sort theo level thấp
-  const loading = screenLoading()
-  const rs = await callApi(API.VOCA_SEARCH, {
-    page: 0,
-    size: 50,
-    direction: 'ASC',
-    properties: 'level'
-  })
-  listWord.value = rs.content
-  loading.close()
-  if (listWord.value.length < 1) return
-  // filter lấy ra tập hợp từ có level = từ đầu tiên
-  listWord.value = listWord.value.filter(item => item.level === listWord.value[0].level)
-  // xáo trộn các từ trong list
-  shuffleArray(listWord.value)
+  if (unref(studyCustom)) {
+    const loading = screenLoading()
+    try {
+      const rs = await callApi(API.VOCA_GET_ONE, {
+        id: unref(studyCustom).id
+      })
+      listWord.value = [rs]
+    } catch (err) {
+      showError(err)
+    } finally {
+      loading.close()
+    }
+  } else {
+    // tìm về 50 từ sort theo level thấp
+    const loading = screenLoading()
+    try {
+      const rs = await callApi(API.VOCA_SEARCH, {
+        page: 0,
+        size: 50,
+        direction: 'ASC',
+        properties: 'level'
+      })
+      listWord.value = rs.content
+      if (listWord.value.length < 1) return
+      // filter lấy ra tập hợp từ có level = từ đầu tiên
+      listWord.value = listWord.value.filter(item => item.level === listWord.value[0].level)
+      // xáo trộn các từ trong list
+      shuffleArray(listWord.value)
+    } catch (err) {
+      showError(err)
+    } finally {
+      loading.close()
+    }
+  }
 }
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -60,7 +81,8 @@ function shuffleArray(array) {
     [array[i], array[j]] = [array[j], array[i]]
   }
 }
-function openDialog() {
+function openDialog(id = false) {
+  studyCustom.value = id
   showDialog.value = true
 }
 function handleFinish(isFinish, word) {

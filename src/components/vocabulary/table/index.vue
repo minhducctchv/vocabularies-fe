@@ -1,7 +1,7 @@
 <template>
   <div>
     <SearchForm ref="refSearch" @search="handleSearch" />
-    <ListVocabularies ref="refTable" :form-search="formSearch" @command="handleTableCommand" @study="showStudy"/>
+    <ListVocabularies ref="refTable" :form-search="formSearch" @command="handleTableCommand" @study="showStudy" @studyCustom="handleStudyCustom"/>
     <DetailDialog ref="refDetailDialog" @search="handleCloseDialog" />
     <StudyDialog ref="refStudyDialog" />
   </div>
@@ -42,6 +42,9 @@ function handleCloseDialog() {
 }
 function showStudy() {
   refStudyDialog.value.openDialog()
+}
+function handleStudyCustom(row) {
+  refStudyDialog.value.openDialog(row)
 }
 </script>
 

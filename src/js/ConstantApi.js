@@ -38,5 +38,9 @@ export const API = {
     VOCA_GET_ONE: {
         url: 'vocabulary/get-one',
         method: REQUEST_METHOD.GET
+    },
+    VOCA_FIND_BY_WORD: {
+        url: 'vocabulary/find-by-word',
+        method: REQUEST_METHOD.GET
     }
 }

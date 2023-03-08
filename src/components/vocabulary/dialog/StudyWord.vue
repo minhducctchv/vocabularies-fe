@@ -10,12 +10,12 @@
       >
         <el-icon v-if="letter === ' '"><StarFilled /></el-icon><span v-else>{{ letter }}</span>
       </span>
-          <span class="word-type">({{ WORD_TYPE[props.word.type].value }})</span>
+          <span class="word-type">({{ WORD_TYPE[props.word.type]?.value }})</span>
         </div>
         <div style="text-align: center">
           <span>{{ props.word.pronunciation }}</span>
         </div>
-        <div style="text-align: center; margin-top: 10px">
+        <div v-if="props.word.linkMp3" style="text-align: center; margin-top: 10px">
           <el-button
             :loading="loadingBtnPlay"
             plain
@@ -41,7 +41,7 @@
         />
       </el-card>
       <div style="height: 20px" />
-      <el-card>
+      <el-card v-if="props.word.suggestion1 || props.word.suggestion2 || props.word.linkImage">
         <el-form-item v-if="props.word.suggestion1" label="Gợi ý 1:">
           <div>{{ props.word.suggestion1 }}</div>
         </el-form-item>
@@ -63,7 +63,7 @@
           <span class="letter-style" style="color: #005aff">{{ props.word.word }}</span>
         </div>
         <div style="text-align: center">
-          <span style="font-style: italic; font-size: 16px">{{ props.word.meaning }}</span>
+          <span style="font-style: italic; font-size: 16px; white-space: pre-line;">{{ props.word.meaning }}</span>
         </div>
       </el-card>
     </el-scrollbar>
@@ -128,6 +128,10 @@ const remainingLetter = computed(() => {
   })
   return wordArr
 })
+const remainingLetterKeyCode = computed(() => {
+  const arr = unref(remainingLetter)
+  return arr.map(s => s.toUpperCase().charCodeAt(0))
+})
 const showWordInput = computed(() => {
   const wordArr = unref(props.word.word).split('')
   const wordInputArr = unref(wordInput).split('')
@@ -158,8 +162,16 @@ watch(wordInput, (val) => {
 })
 
 function preventChar(e) {
-  if (!unref(remainingLetter).includes(e.key) && e.key !== 'Backspace') {
-    showAlert(`Không có chữ [${e.key}]`, ALERT_TYPE.ERROR)
+  console.log(11111, e.keyCode)
+  console.log(2222, e.which)
+  // if (!unref(remainingLetter).includes(e.key) && e.key !== 'Backspace') {
+  //   showAlert(`Không có chữ [${e.key}]`, ALERT_TYPE.ERROR)
+  //   e.preventDefault()
+  // }
+  // Lưu ý: e.keyCode luôn là chữ hoa, không phân biệt được hoa thường
+  const keyCode = e.keyCode || e.which
+  if (!unref(remainingLetterKeyCode).includes(keyCode) && keyCode !== 8) {
+    showAlert(`Không có chữ [${String.fromCharCode(keyCode)}]`, ALERT_TYPE.ERROR)
     e.preventDefault()
   }
 }

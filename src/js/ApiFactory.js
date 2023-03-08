@@ -3,6 +3,7 @@ import {getToken} from "@/js/Token";
 import {REQUEST_METHOD} from "@/js/ConstantApi";
 
 axios.defaults.baseURL = 'https://vocabularies-be.herokuapp.com';
+// axios.defaults.baseURL = 'http://localhost:8080';
 
 export async function callApi(api, param, body) {
     switch (api.method) {

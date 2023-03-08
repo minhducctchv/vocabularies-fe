@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
 
+# npm install --save gh-pages
 # config base trong vite.config.js    base: '/ten-repo/',
 
 # abort on errors

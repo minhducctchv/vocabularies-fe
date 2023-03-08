@@ -19,5 +19,6 @@ export const FORM_MODE = {
 export const COMMAND = {
   EDIT: 'EDIT',
   VIEW: 'VIEW',
-  DELETE: 'DELETE'
+  DELETE: 'DELETE',
+  STUDY_CUSTOM: 'STUDY_CUSTOM'
 }
