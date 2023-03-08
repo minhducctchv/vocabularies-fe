@@ -6,6 +6,7 @@
         :model="formValues"
         :rules="rules"
         label-position="top"
+        @keyup.enter="login(formLogin)"
     >
       <el-form-item
           label="Tên đăng nhập"

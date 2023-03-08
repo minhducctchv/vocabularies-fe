@@ -159,8 +159,14 @@ watch(wordInput, (val) => {
 })
 
 function preventChar(e) {
-  if(e.key) { // th máy tính (ko phải mobile)
-    if (!unref(remainingLetter).includes(e.key) && e.key !== 'Backspace') {
+  if (e.key !== 'Unidentified') { // th máy tính (ko phải mobile)
+    if (!(
+      unref(remainingLetter).includes(e.key) ||
+      ['Backspace', 'Shift', 'Control', 'Alt', 'Meta', 'CapsLock', 'Tab', 'Enter', 'NumLock',
+      'Insert', 'Home', 'PageUp', 'Delete', 'End', 'PageDown', 'ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight',
+      'AudioVolumeMute', 'AudioVolumeDown', 'AudioVolumeUp',
+      'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12'].includes(e.key)
+    )) {
       showAlert(`Không có chữ [${e.key}]`, ALERT_TYPE.ERROR)
       e.preventDefault()
     }
