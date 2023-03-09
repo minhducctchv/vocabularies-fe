@@ -3,7 +3,7 @@
     <SearchForm ref="refSearch" @search="handleSearch" />
     <ListVocabularies ref="refTable" :form-search="formSearch" @command="handleTableCommand" @study="showStudy" @studyCustom="handleStudyCustom"/>
     <DetailDialog ref="refDetailDialog" @search="handleCloseDialog" />
-    <StudyDialog ref="refStudyDialog" />
+    <StudyDialog ref="refStudyDialog" @edit="handleEditWord"/>
   </div>
 </template>
 
@@ -45,6 +45,9 @@ function showStudy() {
 }
 function handleStudyCustom(row) {
   refStudyDialog.value.openDialog(row)
+}
+function handleEditWord(item) {
+  refDetailDialog.value.handleEditOther(item)
 }
 </script>
 

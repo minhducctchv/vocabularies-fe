@@ -4,9 +4,15 @@
     title="Học từ"
     top="5vh"
   >
-    <el-carousel v-if="listWord.length > 0" indicator-position="outside" :autoplay="false" height="720px">
+    <el-carousel
+      v-if="listWord.length > 0"
+      indicator-position="outside"
+      :autoplay="false"
+      height="720px"
+      trigger="click"
+    >
       <el-carousel-item v-for="item in listWord" :key="item.id">
-        <StudyWord :word="item" @finish="handleFinish"/>
+        <StudyWord :word="item" @finish="handleFinish" @edit="editWord"/>
       </el-carousel-item>
     </el-carousel>
     <div v-else>
@@ -30,6 +36,8 @@ import { showError } from '@/js/Alert'
 const showDialog = ref(false)
 const studyCustom = ref(false)
 const listWord = ref([])
+
+const emits = defineEmits(['edit'])
 
 watch(showDialog, (val) => {
   if (val) {
@@ -94,6 +102,9 @@ function handleFinish(isFinish, word) {
       listWord.value.push(word)
     })
   }
+}
+function editWord(item) {
+  emits('edit', item)
 }
 
 defineExpose({

@@ -69,6 +69,12 @@
     </el-scrollbar>
     <div style="text-align: center; margin-top: 20px">
       <el-button
+        type="default"
+        @click="editWord"
+      >
+        Sửa từ này
+      </el-button>
+      <el-button
         v-if="!isShowAnswer"
         type="warning"
         @click="showAnswer"
@@ -107,7 +113,7 @@ import { callApi } from '@/js/ApiFactory'
 import { screenLoading } from '@/js/Loading'
 import { API } from '@/js/ConstantApi'
 
-const emits = defineEmits(['finish'])
+const emits = defineEmits(['finish', 'edit'])
 
 const props = defineProps({
   word: {
@@ -208,6 +214,9 @@ function replaceKeyWord(str) {
   return str.replace(new RegExp(props.word.word, "gi"), "XXX");
   // g để replace all (thay vì first)
   // i để ko phân biệt hoa thường
+}
+function editWord() {
+  emits('edit', unref(props.word))
 }
 
 function skip() {

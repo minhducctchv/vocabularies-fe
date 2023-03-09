@@ -10,7 +10,7 @@
         link
         @click="editExistsWord(item)"
       >
-        {{ item.word }}
+        Word: [{{ item.word }}] - id: [{{ item.id }}]
       </el-button>
     </div>
     <template #footer>

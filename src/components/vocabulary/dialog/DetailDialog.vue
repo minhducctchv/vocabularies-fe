@@ -46,6 +46,22 @@
           </el-form-item>
         </el-col>
       </el-row>
+      <el-alert
+        v-if="listItemDuplicate.length > 0"
+        title="Từ đã tồn tại"
+        type="error"
+        :closable="false"
+        style="margin-bottom: 8px"
+      >
+        <el-button
+          v-for="item in listItemDuplicate"
+          type="primary"
+          link
+          @click="handleEditOther(item)"
+        >
+          Word: [{{ item.word }}] - id: [{{ item.id }}]
+        </el-button>
+      </el-alert>
       <el-row :gutter="gutter">
         <el-col v-bind="fnResponsive(12)">
           <el-form-item
@@ -231,15 +247,15 @@
         </el-button>
       </div>
     </template>
-    <DuplicateDialog ref="refDuplicateDialog" @save="onSave" @edit="handleEditOther"/>
+    <DuplicateDialog ref="refDuplicateDialog" @save="onSave" @edit="handleEditOther" />
   </Dialog>
 
 </template>
 
 <script setup>
 import Dialog from '@/components/common/Dialog.vue'
-import { computed, ref, unref } from 'vue'
-import { cloneDeep } from 'lodash'
+import { computed, ref, unref, watch } from 'vue'
+import { cloneDeep, debounce } from 'lodash'
 import { FORM_MODE, WORD_TYPE } from '@/const/const'
 import { useResponsive } from '@/hook/Responsive'
 import { ALERT_TYPE, showAlert, showConfirm, showError } from '@/js/Alert'
@@ -272,6 +288,7 @@ const formValues = ref(INIT_FORM)
 const mode = ref('')
 const title = ref('')
 const refDuplicateDialog = ref()
+const listItemDuplicate = ref([])
 const rules = ref({
   word: [requiredRule('Từ')],
   pronunciation: [requiredRule('Pronunciation')],
@@ -285,11 +302,15 @@ const isView = computed(() => {
   return unref(mode) === FORM_MODE.VIEW
 })
 
+watch(() => formValues.value.word, debounce(async(val) => {
+  listItemDuplicate.value = await getListDuplicateWord(val, unref(formValues).id, false)
+}, 1000))
+
 async function openDialog(row, formMode) {
   if (row) {
     const loading = screenLoading()
     try {
-      formValues.value = await callApi(API.VOCA_GET_ONE, { id: row.id})
+      formValues.value = await callApi(API.VOCA_GET_ONE, { id: row.id })
     } catch (err) {
       showError(err)
     } finally {
@@ -301,10 +322,13 @@ async function openDialog(row, formMode) {
   mode.value = formMode
   title.value = `${unref(mode) === FORM_MODE.CREATE ? 'Thêm mới' : (unref(mode) === FORM_MODE.EDIT ? 'Cập nhật' : 'Xem')} từ vựng`
   showDialog.value = true
+  listItemDuplicate.value = []
 }
+
 function closeDialog() {
   showDialog.value = false
 }
+
 async function onSave(isCheckDup = true) {
   try {
     await refForm.value.validate()
@@ -317,7 +341,7 @@ async function onSave(isCheckDup = true) {
       }
     }
     const loading = screenLoading()
-    callApi( payload.id? API.VOCA_UPDATE : API.VOCA_CREATE, {}, payload).then(() => {
+    callApi(payload.id ? API.VOCA_UPDATE : API.VOCA_CREATE, {}, payload).then(() => {
       showAlert(`${payload.id ? 'Cập nhật' : 'Thêm mới'} thành công`)
       closeDialog()
       emits('search', true)
@@ -330,6 +354,7 @@ async function onSave(isCheckDup = true) {
     // do nothing
   }
 }
+
 function playMp3(linkMp3) {
   loadingBtnPlay.value = true
   const audio = new Audio(linkMp3)
@@ -341,11 +366,13 @@ function playMp3(linkMp3) {
     loadingBtnPlay.value = false
   })
 }
+
 function validateField(field) {
   refForm.value.validateField(field)
 }
-async function getListDuplicateWord(word, id) {
-  const loading = screenLoading()
+
+async function getListDuplicateWord(word, id, isLoading = true) {
+  const loading = !isLoading ? null : screenLoading()
   try {
     const listDuplicateItem = await callApi(API.VOCA_FIND_BY_WORD, { word: word })
     if (listDuplicateItem && listDuplicateItem.length > 0 && unref(mode) === FORM_MODE.CREATE) {
@@ -358,14 +385,17 @@ async function getListDuplicateWord(word, id) {
   } catch (err) {
     showError(err)
   } finally {
-    loading.close()
+    if (loading) loading.close()
   }
   return []
 }
+
 function handleEditOther(item) {
   mode.value = FORM_MODE.EDIT
   formValues.value = cloneDeep(item)
+  listItemDuplicate.value = []
 }
+
 function onDelete() {
   showConfirm('Bạn có chắc chắn muốn xóa?', () => {
     const loading = screenLoading()
@@ -384,7 +414,8 @@ function onDelete() {
 defineExpose({
   openDialog,
   closeDialog,
-  playMp3
+  playMp3,
+  handleEditOther
 })
 </script>
 
