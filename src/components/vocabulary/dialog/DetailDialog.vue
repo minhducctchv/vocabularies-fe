@@ -24,6 +24,7 @@
               placeholder="Từ"
               show-word-limit
               clearable
+              @blur="() => formValues.word = formValues.word.trim()"
             />
             <span v-else>{{ formValues.word }}</span>
           </el-form-item>

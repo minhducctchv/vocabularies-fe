@@ -163,6 +163,8 @@ function search() {
   callApi(API.VOCA_SEARCH, params).then(rs => {
     tableData.value = rs.content
     total.value = rs.totalElements
+  }).catch(err => {
+    showError(err)
   }).finally(() => {
     updateLoadingSearch(false)
   })

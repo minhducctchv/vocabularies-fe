@@ -6,6 +6,7 @@ import {callApi} from "@/js/ApiFactory";
 import TokenHetHanDialog from "@/components/login/dialog/TokenHetHanDialog.vue";
 import {API} from "@/js/ConstantApi";
 import Table from '@/components/vocabulary/table/index.vue'
+import {screenLoading} from "@/js/Loading";
 
 const showLogin = ref(true)
 const tokenHetHanDialog = ref()
@@ -34,12 +35,15 @@ const handleHetHan = () => {
 const checkToken = () => {
   const token = getToken()
   if (token) {
+    const loading = screenLoading()
     callApi(API.CHECK_TOKEN, {
       token: token
     }).then(() => {
       showLogin.value = false
     }).catch(() => {
       handleHetHan()
+    }).finally(() => {
+      loading.close()
     })
   } else {
     handleHetHan()
