@@ -93,6 +93,9 @@ function openDialog(id = false) {
   studyCustom.value = id
   showDialog.value = true
 }
+function closeDialog() {
+  showDialog.value = false
+}
 function handleFinish(isFinish, word) {
   const index = listWord.value.findIndex(s => s.id === word.id)
   listWord.value.splice(index, 1)
@@ -104,6 +107,7 @@ function handleFinish(isFinish, word) {
   }
 }
 function editWord(item) {
+  closeDialog()
   emits('edit', item)
 }
 

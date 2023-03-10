@@ -72,7 +72,7 @@
         type="default"
         @click="editWord"
       >
-        Sửa từ này
+        Sửa
       </el-button>
       <el-button
         v-if="!isShowAnswer"
@@ -169,9 +169,9 @@ function preventChar(e) {
     if (!(
       unref(remainingLetter).includes(e.key) ||
       ['Backspace', 'Shift', 'Control', 'Alt', 'Meta', 'CapsLock', 'Tab', 'Enter', 'NumLock',
-      'Insert', 'Home', 'PageUp', 'Delete', 'End', 'PageDown', 'ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight',
-      'AudioVolumeMute', 'AudioVolumeDown', 'AudioVolumeUp',
-      'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12'].includes(e.key)
+        'Insert', 'Home', 'PageUp', 'Delete', 'End', 'PageDown', 'ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight',
+        'AudioVolumeMute', 'AudioVolumeDown', 'AudioVolumeUp',
+        'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12'].includes(e.key)
     )) {
       showAlert(`Không có chữ [${e.key}]`, ALERT_TYPE.ERROR)
       e.preventDefault()
@@ -210,13 +210,17 @@ function finish() {
     })
   })
 }
+
 function replaceKeyWord(str) {
-  return str.replace(new RegExp(props.word.word, "gi"), "XXX");
+  return str.replace(new RegExp(props.word.word, 'gi'), 'XXX')
   // g để replace all (thay vì first)
   // i để ko phân biệt hoa thường
 }
+
 function editWord() {
-  emits('edit', unref(props.word))
+  showConfirm('Bạn có muốn sửa từ này?', () => {
+    emits('edit', unref(props.word))
+  })
 }
 
 function skip() {

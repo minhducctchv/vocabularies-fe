@@ -13,6 +13,7 @@ import ListVocabularies from '@/components/vocabulary/table/ListVocabularies.vue
 import { provide, ref, unref } from 'vue'
 import DetailDialog from '@/components/vocabulary/dialog/DetailDialog.vue'
 import StudyDialog from "@/components/vocabulary/dialog/StudyDialog.vue";
+import { FORM_MODE } from '@/const/const'
 
 const loadingSearch = ref(false)
 const formSearch = ref({})
@@ -47,7 +48,7 @@ function handleStudyCustom(row) {
   refStudyDialog.value.openDialog(row)
 }
 function handleEditWord(item) {
-  refDetailDialog.value.handleEditOther(item)
+  refDetailDialog.value.openDialog(item, FORM_MODE.EDIT)
 }
 </script>
 
