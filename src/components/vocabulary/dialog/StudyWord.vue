@@ -45,7 +45,7 @@
         <el-form-item v-if="props.word.suggestion1" label="Gợi ý 1:">
           <div>{{ isShowAnswer ? props.word.suggestion1 : replaceKeyWord(props.word.suggestion1) }}</div>
         </el-form-item>
-        <el-form-item v-if="props.word.suggestion2" label="Gợi ý 2:">
+        <el-form-item v-if="props.word.suggestion2 && isShowAnswer" label="Gợi ý 2:">
           <div>{{ isShowAnswer ? props.word.suggestion1 : replaceKeyWord(props.word.suggestion2) }}</div>
         </el-form-item>
         <div v-if="props.word.linkImage" style="text-align: center">
