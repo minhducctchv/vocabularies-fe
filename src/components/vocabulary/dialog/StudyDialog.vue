@@ -8,7 +8,7 @@
       v-if="listWord.length > 0"
       indicator-position="outside"
       :autoplay="false"
-      height="720px"
+      height="620px"
       trigger="click"
     >
       <el-carousel-item v-for="item in listWord" :key="item.id">
@@ -19,6 +19,16 @@
       <el-empty
         image="https://thuviendohoa.vn/upload/images/items/chu-meo-may-doreamon-an-banh-ran-hinh-anh-png-627.jpg"
         description="BẠN HỌC XONG HẾT RỒI ĐẤY"
+      />
+    </div>
+    <div style="text-align: center">
+      <el-select-v2
+          v-if="!studyCustom"
+          v-model="numberWords"
+          :options="options"
+          placeholder="Chọn số từ sẽ học"
+          :clearable="false"
+          @change="findWord"
       />
     </div>
   </Dialog>
@@ -36,6 +46,12 @@ import { showError } from '@/js/Alert'
 const showDialog = ref(false)
 const studyCustom = ref(false)
 const listWord = ref([])
+const options = ref([
+  { value: 10, label: '10 bản ghi' },
+  { value: 25, label: '25 bản ghi' },
+  { value: 50, label: '50 bản ghi' }
+])
+const numberWords = ref(25)
 
 const emits = defineEmits(['edit'])
 
@@ -61,12 +77,12 @@ async function findWord() {
       loading.close()
     }
   } else {
-    // tìm về 50 từ sort theo level thấp
+    // tìm về numberWords sort theo level thấp
     const loading = screenLoading()
     try {
       const rs = await callApi(API.VOCA_SEARCH, {
         page: 0,
-        size: 50,
+        size: unref(numberWords),
         direction: 'ASC',
         properties: 'level'
       })

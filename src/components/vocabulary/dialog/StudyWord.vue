@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-scrollbar height="620px">
+    <el-scrollbar height="520px">
       <el-card>
         <div style="text-align: center">
       <span
