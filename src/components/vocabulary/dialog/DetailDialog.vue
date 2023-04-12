@@ -124,13 +124,13 @@
                   clearable
                 />
               </el-col>
-              <el-col v-if="formValues.linkMp3" :span="6">
+              <el-col v-if="formValues.linkMp3 !== 'a'" :span="6">
                 <el-button
                   :loading="loadingBtnPlay"
                   plain
                   type="primary"
                   :icon="Headset"
-                  @click="playMp3(formValues.linkMp3)"
+                  @click="playMp3"
                 />
               </el-col>
             </el-row>
@@ -266,6 +266,7 @@ import { screenLoading } from '@/js/Loading'
 import { API } from '@/js/ConstantApi'
 import { callApi } from '@/js/ApiFactory'
 import DuplicateDialog from '@/components/vocabulary/dialog/DuplicateDialog.vue'
+import {getMp3} from "@/js/GetMp3";
 
 const { fnResponsive } = useResponsive()
 
@@ -356,9 +357,21 @@ async function onSave(isCheckDup = true) {
   }
 }
 
-function playMp3(linkMp3) {
+let mp3 = ''
+async function playMp3() {
+  const form = unref(formValues)
   loadingBtnPlay.value = true
-  const audio = new Audio(linkMp3)
+
+  if (!form.linkMp3) {
+    mp3 = await getMp3(form.word)
+    if (!mp3) {
+      loadingBtnPlay.value = false
+      return
+    }
+    formValues.value.linkMp3 = mp3
+  }
+
+  const audio = new Audio(form.linkMp3 ? form.linkMp3 : mp3)
   audio.addEventListener('ended', () => {
     loadingBtnPlay.value = false
   })

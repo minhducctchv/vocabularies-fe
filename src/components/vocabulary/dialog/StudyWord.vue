@@ -15,7 +15,7 @@
         <div style="text-align: center">
           <span>{{ props.word.pronunciation }}</span>
         </div>
-        <div v-if="props.word.linkMp3" style="text-align: center; margin-top: 10px">
+        <div v-if="props.word.linkMp3 !== 'a'" style="text-align: center; margin-top: 10px">
           <el-button
             :loading="loadingBtnPlay"
             plain
@@ -112,6 +112,7 @@ import { WORD_TYPE } from '@/const/const'
 import { callApi } from '@/js/ApiFactory'
 import { screenLoading } from '@/js/Loading'
 import { API } from '@/js/ConstantApi'
+import {getMp3} from "@/js/GetMp3";
 
 const emits = defineEmits(['finish', 'edit'])
 
@@ -179,9 +180,28 @@ function preventChar(e) {
   }
 }
 
-function playMp3(linkMp3) {
+let mp3 = ''
+async function playMp3(linkMp3) {
   loadingBtnPlay.value = true
-  const audio = new Audio(linkMp3)
+
+  if (!linkMp3) {
+    const word = unref(props.word)
+    mp3 = await getMp3(props.word.word)
+    if (!mp3) {
+      loadingBtnPlay.value = false
+      return
+    }
+    word.linkMp3 = mp3
+    callApi(API.VOCA_UPDATE, {}, word).then(() => {
+      showAlert('Thêm mp3 thành công')
+    }).catch(err => {
+      showError(err)
+      loadingBtnPlay.value = false
+    })
+  }
+
+  const audio = new Audio(linkMp3 ? linkMp3 : mp3)
+
   audio.addEventListener('ended', () => {
     loadingBtnPlay.value = false
   })
@@ -200,6 +220,7 @@ function finish() {
     const loading = screenLoading()
     const word = unref(props.word)
     word.level = word.level + 1
+    if (mp3) word.linkMp3 = mp3
     callApi(API.VOCA_UPDATE, {}, word).then(() => {
       showAlert(`Học xong từ: ${word.word}`)
       emits('finish', true, word)

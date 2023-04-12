@@ -42,12 +42,12 @@
       >
         <template #default="scope">
           <el-button
-              v-if="scope.row.linkMp3"
+              v-if="scope.row.linkMp3 !== 'a'"
               :loading="loadingBtnMp3[scope.$index]"
               plain
               type="primary"
               :icon="Headset"
-              @click="playMp3(scope.row.linkMp3, scope.$index)"
+              @click="playMp3(scope.row, scope.$index)"
           />
         </template>
       </el-table-column>
@@ -100,6 +100,7 @@ import {callApi} from '@/js/ApiFactory'
 import {COMMAND, FORM_MODE} from '@/const/const'
 import {ALERT_TYPE, showAlert, showConfirm, showError} from '@/js/Alert'
 import {screenLoading} from '@/js/Loading'
+import {getMp3} from "@/js/GetMp3";
 
 const props = defineProps({
   formSearch: {
@@ -182,9 +183,27 @@ function onDelete(row) {
     })
   })
 }
-function playMp3(linkMp3, index) {
+
+let mp3 = ''
+async function playMp3(row, index) {
   loadingBtnMp3.value[index] = true
-  const audio = new Audio(linkMp3)
+
+  if (!row.linkMp3) {
+    mp3 = await getMp3(row.word)
+    if (!mp3) {
+      loadingBtnMp3.value[index] = false
+      return
+    }
+    row.linkMp3 = mp3
+    callApi(API.VOCA_UPDATE, {}, row).then(() => {
+      showAlert('Thêm mp3 thành công')
+    }).catch(err => {
+      showError(err)
+      loadingBtnMp3.value[index] = false
+    })
+  }
+
+  const audio = new Audio(row.linkMp3)
   audio.addEventListener('ended', () => {
     loadingBtnMp3.value[index] = false
   })
