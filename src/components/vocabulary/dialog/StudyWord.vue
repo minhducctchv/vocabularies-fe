@@ -15,11 +15,12 @@
         <div style="text-align: center">
           <span>{{ props.word.pronunciation }}</span>
         </div>
-        <div v-if="props.word.linkMp3 !== 'a'" style="text-align: center; margin-top: 10px">
+        <div v-if="props.word.linkMp3" style="text-align: center; margin-top: 10px">
           <el-button
             :loading="loadingBtnPlay"
             plain
             type="primary"
+            :class="{ 'background-red': props.word.linkMp3 === 'a' }"
             :icon="VideoPlay"
             @click="playMp3(props.word.linkMp3)"
           />
@@ -184,7 +185,7 @@ let mp3 = ''
 async function playMp3(linkMp3) {
   loadingBtnPlay.value = true
 
-  if (!linkMp3) {
+  if (!linkMp3 || linkMp3 === 'a') {
     const word = unref(props.word)
     mp3 = await getMp3(props.word.word)
     if (!mp3) {
@@ -271,5 +272,9 @@ function skip() {
 .word-type {
   font-style: italic;
   color: #ed5e32;
+}
+
+.background-red {
+  background-color: rgb(245, 187, 190);
 }
 </style>

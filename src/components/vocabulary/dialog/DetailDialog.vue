@@ -124,11 +124,12 @@
                   clearable
                 />
               </el-col>
-              <el-col v-if="formValues.linkMp3 !== 'a'" :span="6">
+              <el-col v-if="formValues.linkMp3" :span="6">
                 <el-button
                   :loading="loadingBtnPlay"
                   plain
                   type="primary"
+                  :class="{ 'background-red': formValues.linkMp3 === 'a' }"
                   :icon="Headset"
                   @click="playMp3"
                 />
@@ -362,7 +363,7 @@ async function playMp3() {
   const form = unref(formValues)
   loadingBtnPlay.value = true
 
-  if (!form.linkMp3) {
+  if (!form.linkMp3 || form.linkMp3 === 'a') {
     mp3 = await getMp3(form.word)
     if (!mp3) {
       loadingBtnPlay.value = false
@@ -434,5 +435,7 @@ defineExpose({
 </script>
 
 <style scoped>
-
+.background-red {
+  background-color: rgb(245, 187, 190);
+}
 </style>

@@ -42,10 +42,11 @@
       >
         <template #default="scope">
           <el-button
-              v-if="scope.row.linkMp3 !== 'a'"
+              v-if="scope.row.linkMp3"
               :loading="loadingBtnMp3[scope.$index]"
               plain
               type="primary"
+              :class="{ 'background-red': scope.row.linkMp3 === 'a' }"
               :icon="Headset"
               @click="playMp3(scope.row, scope.$index)"
           />
@@ -188,7 +189,7 @@ let mp3 = ''
 async function playMp3(row, index) {
   loadingBtnMp3.value[index] = true
 
-  if (!row.linkMp3) {
+  if (!row.linkMp3 || row.linkMp3 === 'a') {
     mp3 = await getMp3(row.word)
     if (!mp3) {
       loadingBtnMp3.value[index] = false
@@ -219,5 +220,7 @@ defineExpose({
 </script>
 
 <style scoped>
-
+.background-red {
+  background-color: rgb(245, 187, 190);
+}
 </style>
